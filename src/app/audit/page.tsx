@@ -1,18 +1,30 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function AuditPage() {
   const [tool, setTool] = useState("");
   const [monthlySpend, setMonthlySpend] = useState("");
   const [seats, setSeats] = useState("");
+  useEffect(() => {
+    const savedTool = localStorage.getItem("tool");
+    const savedSpend = localStorage.getItem("monthlySpend");
+    const savedSeats = localStorage.getItem("seats");
+
+    if (savedTool) setTool(savedTool);
+    if (savedSpend) setMonthlySpend(savedSpend);
+    if (savedSeats) setSeats(savedSeats);
+  }, []);
+  useEffect(() => {
+    localStorage.setItem("tool", tool);
+    localStorage.setItem("monthlySpend", monthlySpend);
+    localStorage.setItem("seats", seats);
+  }, [tool, monthlySpend, seats]);
 
   return (
     <main className="min-h-screen p-8">
       <div className="mx-auto max-w-3xl">
-        <h1 className="text-4xl font-bold">
-          AI Spend Audit
-        </h1>
+        <h1 className="text-4xl font-bold">AI Spend Audit</h1>
 
         <p className="mt-2 text-muted-foreground">
           Tell us about your AI stack.
@@ -20,9 +32,7 @@ export default function AuditPage() {
 
         <div className="mt-10 space-y-6">
           <div>
-            <label className="mb-2 block font-medium">
-              Tool
-            </label>
+            <label className="mb-2 block font-medium">Tool</label>
 
             <select
               value={tool}
@@ -38,9 +48,7 @@ export default function AuditPage() {
           </div>
 
           <div>
-            <label className="mb-2 block font-medium">
-              Monthly Spend ($)
-            </label>
+            <label className="mb-2 block font-medium">Monthly Spend ($)</label>
 
             <input
               type="number"
@@ -51,9 +59,7 @@ export default function AuditPage() {
           </div>
 
           <div>
-            <label className="mb-2 block font-medium">
-              Number of Seats
-            </label>
+            <label className="mb-2 block font-medium">Number of Seats</label>
 
             <input
               type="number"
