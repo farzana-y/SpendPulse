@@ -1,0 +1,1 @@
+day 1 - studied how to code in next.js how to set up landing page using chatgpt 
