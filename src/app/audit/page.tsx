@@ -34,7 +34,15 @@ export default function AuditPage() {
     localStorage.setItem("teamSize", teamSize);
     localStorage.setItem("useCase", useCase);
   }, [tool, monthlySpend, seats, plan, teamSize, useCase]);
+  const toolPlans: Record<string, string[]> = {
+    Cursor: ["Hobby", "Pro", "Business", "Enterprise"],
 
+    ChatGPT: ["Free", "Plus", "Team", "Enterprise"],
+
+    Claude: ["Free", "Pro", "Team", "Enterprise"],
+
+    Copilot: ["Individual", "Business", "Enterprise"],
+  };
   return (
     <main className="min-h-screen p-8">
       <div className="mx-auto max-w-3xl">
@@ -50,7 +58,10 @@ export default function AuditPage() {
 
             <select
               value={tool}
-              onChange={(e) => setTool(e.target.value)}
+              onChange={(e) => {
+                setTool(e.target.value);
+                setPlan("");
+              }}
               className="w-full rounded-xl border p-3"
             >
               <option value="">Select a tool</option>
@@ -91,10 +102,12 @@ export default function AuditPage() {
               className="w-full rounded-xl border p-3"
             >
               <option value="">Select a plan</option>
-              <option value="Free">Free</option>
-              <option value="Pro">Pro</option>
-              <option value="Team">Team</option>
-              <option value="Enterprise">Enterprise</option>
+              {tool &&
+                toolPlans[tool]?.map((planOption) => (
+                  <option key={planOption} value={planOption}>
+                    {planOption}
+                  </option>
+                ))}
             </select>
           </div>
           <div>
@@ -142,24 +155,48 @@ export default function AuditPage() {
             Generate Audit
           </button>
           {result && (
-            <div className="mt-10 rounded-xl border p-6">
-              <h2 className="text-2xl font-bold">Audit Result</h2>
+            <div className="mt-10 rounded-2xl border bg-white p-8 shadow-sm">
+              <h2 className="text-3xl font-bold">Audit Results</h2>
 
-              <p className="mt-4">
-                <strong>Recommendation:</strong> {result.recommendation}
-              </p>
+              <div className="mt-6 grid gap-4 sm:grid-cols-2">
+                <div className="rounded-xl border p-4">
+                  <p className="text-sm text-gray-500">Current Monthly Spend</p>
 
-              <p className="mt-2">
-                <strong>Monthly Savings:</strong> ${result.savings}
-              </p>
+                  <p className="mt-2 text-2xl font-bold">
+                    ${result.currentSpend}
+                  </p>
+                </div>
 
-              <p className="mt-2">
-                <strong>Annual Savings:</strong> ${result.annualSavings}
-              </p>
+                <div className="rounded-xl border p-4">
+                  <p className="text-sm text-gray-500">Recommended Spend</p>
 
-              <p className="mt-2">
-                <strong>Reason:</strong> {result.reason}
-              </p>
+                  <p className="mt-2 text-2xl font-bold">
+                    ${result.recommendedSpend}
+                  </p>
+                </div>
+
+                <div className="rounded-xl border p-4">
+                  <p className="text-sm text-gray-500">Monthly Savings</p>
+
+                  <p className="mt-2 text-2xl font-bold">${result.savings}</p>
+                </div>
+
+                <div className="rounded-xl border p-4">
+                  <p className="text-sm text-gray-500">Annual Savings</p>
+
+                  <p className="mt-2 text-2xl font-bold">
+                    ${result.annualSavings}
+                  </p>
+                </div>
+              </div>
+
+              <div className="mt-8 rounded-xl border p-5">
+                <h3 className="text-lg font-semibold">Recommendation</h3>
+
+                <p className="mt-2">{result.recommendation}</p>
+
+                <p className="mt-4 text-sm text-gray-600">{result.reason}</p>
+              </div>
             </div>
           )}
         </div>

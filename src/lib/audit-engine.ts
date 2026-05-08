@@ -12,19 +12,13 @@ export function generateAudit(input: AuditInput) {
   let savings = 0;
   let reason = "";
 
-  if (
-    input.tool === "ChatGPT" &&
-    input.plan === "Team" &&
-    input.seats <= 2
-  ) {
+  if (input.tool === "ChatGPT" && input.plan === "Team" && input.seats <= 2) {
     recommendation = "Switch to ChatGPT Plus";
     savings = 20;
 
     reason =
       "Team plans may be unnecessary for very small teams with lightweight collaboration needs.";
-  }
-
-  else if (
+  } else if (
     input.tool === "Cursor" &&
     input.plan === "Business" &&
     input.teamSize <= 3
@@ -35,9 +29,18 @@ export function generateAudit(input: AuditInput) {
 
     reason =
       "Cursor Business features may not justify the additional cost for smaller teams.";
-  }
+  } else if (
+    input.tool === "Claude" &&
+    input.plan === "Team" &&
+    input.teamSize <= 3
+  ) {
+    recommendation = "Switch to Claude Pro";
 
-  else {
+    savings = 30;
+
+    reason =
+      "Claude Team pricing may be unnecessary for smaller teams without advanced collaboration needs.";
+  } else {
     recommendation = "Your current setup looks cost-efficient.";
 
     savings = 0;
@@ -47,9 +50,16 @@ export function generateAudit(input: AuditInput) {
   }
 
   return {
-    recommendation,
+    currentSpend: input.monthlySpend,
+
+    recommendedSpend: input.monthlySpend - savings,
+
     savings,
+
     annualSavings: savings * 12,
+
+    recommendation,
+
     reason,
   };
 }
