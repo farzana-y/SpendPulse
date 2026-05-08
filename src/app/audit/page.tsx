@@ -1,8 +1,10 @@
 "use client";
 import { generateAudit } from "@/lib/audit-engine";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function AuditPage() {
+  const router = useRouter();
   const [tool, setTool] = useState("");
   const [monthlySpend, setMonthlySpend] = useState("");
   const [seats, setSeats] = useState("");
@@ -97,6 +99,7 @@ export default function AuditPage() {
             <label className="mb-2 block font-medium">Plan</label>
 
             <select
+              disabled={!tool}
               value={plan}
               onChange={(e) => setPlan(e.target.value)}
               className="w-full rounded-xl border p-3"
@@ -148,57 +151,15 @@ export default function AuditPage() {
                 useCase,
               });
 
-              setResult(audit);
+              localStorage.setItem("auditResult", JSON.stringify(audit));
+
+              router.push("/results");
             }}
             className="rounded-xl bg-black px-6 py-3 text-white"
           >
             Generate Audit
           </button>
-          {result && (
-            <div className="mt-10 rounded-2xl border bg-white p-8 shadow-sm">
-              <h2 className="text-3xl font-bold">Audit Results</h2>
-
-              <div className="mt-6 grid gap-4 sm:grid-cols-2">
-                <div className="rounded-xl border p-4">
-                  <p className="text-sm text-gray-500">Current Monthly Spend</p>
-
-                  <p className="mt-2 text-2xl font-bold">
-                    ${result.currentSpend}
-                  </p>
-                </div>
-
-                <div className="rounded-xl border p-4">
-                  <p className="text-sm text-gray-500">Recommended Spend</p>
-
-                  <p className="mt-2 text-2xl font-bold">
-                    ${result.recommendedSpend}
-                  </p>
-                </div>
-
-                <div className="rounded-xl border p-4">
-                  <p className="text-sm text-gray-500">Monthly Savings</p>
-
-                  <p className="mt-2 text-2xl font-bold">${result.savings}</p>
-                </div>
-
-                <div className="rounded-xl border p-4">
-                  <p className="text-sm text-gray-500">Annual Savings</p>
-
-                  <p className="mt-2 text-2xl font-bold">
-                    ${result.annualSavings}
-                  </p>
-                </div>
-              </div>
-
-              <div className="mt-8 rounded-xl border p-5">
-                <h3 className="text-lg font-semibold">Recommendation</h3>
-
-                <p className="mt-2">{result.recommendation}</p>
-
-                <p className="mt-4 text-sm text-gray-600">{result.reason}</p>
-              </div>
-            </div>
-          )}
+          
         </div>
       </div>
     </main>
