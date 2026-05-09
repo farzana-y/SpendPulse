@@ -40,6 +40,17 @@ export function generateAudit(input: AuditInput) {
 
     reason =
       "Claude Team pricing may be unnecessary for smaller teams without advanced collaboration needs.";
+  } else if (
+    input.tool === "Copilot" &&
+    input.plan === "Enterprise" &&
+    input.teamSize <= 5
+  ) {
+    recommendation = "Switch to GitHub Copilot Business";
+
+    savings = 50;
+
+    reason =
+      "Enterprise-grade administrative controls may not be necessary for smaller engineering teams.";
   } else {
     recommendation = "Your current setup looks cost-efficient.";
 
