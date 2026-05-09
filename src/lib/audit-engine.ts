@@ -74,3 +74,50 @@ export function generateAudit(input: AuditInput) {
     reason,
   };
 }
+export function detectOverlaps(
+  subscriptions: any[]
+) {
+  const recommendations = [];
+
+  const hasChatGPT = subscriptions.some(
+    (sub) => sub.tool === "ChatGPT"
+  );
+
+  const hasClaude = subscriptions.some(
+    (sub) => sub.tool === "Claude"
+  );
+
+  const hasCursor = subscriptions.some(
+    (sub) => sub.tool === "Cursor"
+  );
+
+  const hasCopilot = subscriptions.some(
+    (sub) => sub.tool === "Copilot"
+  );
+
+  if (hasChatGPT && hasClaude) {
+    recommendations.push({
+      title:
+        "Potential overlap between ChatGPT and Claude",
+
+      savings: 20,
+
+      reason:
+        "Both tools provide strong general-purpose AI assistance. Some teams may not require premium subscriptions to both simultaneously.",
+    });
+  }
+
+  if (hasCursor && hasCopilot) {
+    recommendations.push({
+      title:
+        "Potential overlap between Cursor and Copilot",
+
+      savings: 19,
+
+      reason:
+        "Both tools serve AI-assisted coding workflows and may create redundant spend for smaller teams.",
+    });
+  }
+
+  return recommendations;
+}

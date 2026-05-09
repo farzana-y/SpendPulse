@@ -1,17 +1,25 @@
 "use client";
-import { generateAudit } from "@/lib/audit-engine";
+import { detectOverlaps } from "@/lib/audit-engine";
+import { pricing } from "@/lib/pricing";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-
+type Subscription = {
+  tool: string;
+  plan: string;
+  monthlySpend: number;
+  seats: number;
+  teamSize: number;
+  useCase: string;
+};
 export default function AuditPage() {
   const router = useRouter();
   const [tool, setTool] = useState("");
+  const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
   const [monthlySpend, setMonthlySpend] = useState("");
   const [seats, setSeats] = useState("");
   const [plan, setPlan] = useState("");
   const [teamSize, setTeamSize] = useState("");
   const [useCase, setUseCase] = useState("");
-  const [result, setResult] = useState<any>(null);
 
   useEffect(() => {
     const savedTool = localStorage.getItem("tool");
@@ -36,15 +44,21 @@ export default function AuditPage() {
     localStorage.setItem("teamSize", teamSize);
     localStorage.setItem("useCase", useCase);
   }, [tool, monthlySpend, seats, plan, teamSize, useCase]);
-  const toolPlans: Record<string, string[]> = {
-    Cursor: ["Hobby", "Pro", "Business", "Enterprise"],
+  useEffect(() => {
+    if (!tool || !plan || !seats) return;
 
-    ChatGPT: ["Free", "Plus", "Team", "Enterprise"],
+    const selectedPrice =
+      pricing[tool as keyof typeof pricing]?.[
+        plan as keyof (typeof pricing)[keyof typeof pricing]
+      ];
 
-    Claude: ["Free", "Pro", "Team", "Enterprise"],
+    if (typeof selectedPrice === "number") {
+      const total = selectedPrice * Number(seats);
 
-    Copilot: ["Individual", "Business", "Enterprise"],
-  };
+      setMonthlySpend(String(total));
+    }
+  }, [tool, plan, seats]);
+  const toolPlans = Object.keys(pricing);
   return (
     <main className="min-h-screen p-8">
       <div className="mx-auto max-w-3xl">
@@ -67,10 +81,11 @@ export default function AuditPage() {
               className="w-full rounded-xl border p-3"
             >
               <option value="">Select a tool</option>
-              <option value="Cursor">Cursor</option>
-              <option value="ChatGPT">ChatGPT</option>
-              <option value="Claude">Claude</option>
-              <option value="Copilot">GitHub Copilot</option>
+              {toolPlans.map((toolName) => (
+                <option key={toolName} value={toolName}>
+                  {toolName}
+                </option>
+              ))}
             </select>
           </div>
 
@@ -106,11 +121,13 @@ export default function AuditPage() {
             >
               <option value="">Select a plan</option>
               {tool &&
-                toolPlans[tool]?.map((planOption) => (
-                  <option key={planOption} value={planOption}>
-                    {planOption}
-                  </option>
-                ))}
+                Object.keys(pricing[tool as keyof typeof pricing] || {})
+                  .filter((plan) => plan !== "API")
+                  .map((planOption) => (
+                    <option key={planOption} value={planOption}>
+                      {planOption}
+                    </option>
+                  ))}
             </select>
           </div>
           <div>
@@ -142,16 +159,51 @@ export default function AuditPage() {
 
           <button
             onClick={() => {
-              const audit = generateAudit({
-                tool,
-                plan,
-                monthlySpend: Number(monthlySpend),
-                seats: Number(seats),
-                teamSize: Number(teamSize),
-                useCase,
-              });
+              if (subscriptions.length === 0) {
+                alert("Please add at least one subscription.");
+                return;
+              }
 
-              localStorage.setItem("auditResult", JSON.stringify(audit));
+              const totalSpend = subscriptions.reduce(
+                (total, sub) => total + sub.monthlySpend,
+                0,
+              );
+
+              const overlaps = detectOverlaps(subscriptions);
+
+              const totalSavings = overlaps.reduce(
+                (total, overlap) => total + overlap.savings,
+                0,
+              );
+
+              const audit = {
+                currentSpend: totalSpend,
+
+                recommendedSpend: totalSpend - totalSavings,
+
+                savings: totalSavings,
+
+                annualSavings: totalSavings * 12,
+
+                recommendation:
+                  overlaps.length > 0
+                    ? "Optimization opportunities detected."
+                    : "Current setup appears cost-efficient.",
+
+                reason:
+                  overlaps.length > 0
+                    ? "Multiple overlapping AI subscriptions were identified."
+                    : "No major redundant spending detected.",
+              };
+
+              localStorage.setItem(
+                "auditResult",
+                JSON.stringify({
+                  audit,
+                  overlaps,
+                  subscriptions,
+                }),
+              );
 
               router.push("/results");
             }}
@@ -159,7 +211,63 @@ export default function AuditPage() {
           >
             Generate Audit
           </button>
-          
+          <button
+            onClick={() => {
+              if (
+                !tool ||
+                !plan ||
+                !monthlySpend ||
+                !seats ||
+                !teamSize ||
+                !useCase
+              ) {
+                alert("Please fill all fields.");
+                return;
+              }
+
+              const newSubscription = {
+                tool,
+                plan,
+                monthlySpend: Number(monthlySpend),
+                seats: Number(seats),
+                teamSize: Number(teamSize),
+                useCase,
+              };
+
+              setSubscriptions([...subscriptions, newSubscription]);
+
+              setTool("");
+              setPlan("");
+              setMonthlySpend("");
+              setSeats("");
+              setTeamSize("");
+              setUseCase("");
+            }}
+            className="mt-4 rounded-xl border px-6 py-3"
+          >
+            Add Subscription
+          </button>
+          <div className="mt-10 space-y-4">
+            {subscriptions.map((sub, index) => (
+              <div key={index} className="rounded-xl border p-4">
+                <p>
+                  <strong>Tool:</strong> {sub.tool}
+                </p>
+
+                <p>
+                  <strong>Plan:</strong> {sub.plan}
+                </p>
+
+                <p>
+                  <strong>Monthly Spend:</strong> ${sub.monthlySpend}
+                </p>
+              </div>
+            ))}
+          </div>
+          <p className="mt-6 text-2xl font-bold">
+            Total Monthly Spend: $
+            {subscriptions.reduce((total, sub) => total + sub.monthlySpend, 0)}
+          </p>
         </div>
       </div>
     </main>
