@@ -5,7 +5,7 @@ export const pricing = {
     "Pro+": 60,
     Ultra: 200,
     Teams: 40,
-    Enterprise: 0,
+    Enterprise: null,
   },
 
   Copilot: {
@@ -46,7 +46,7 @@ export const pricing = {
     Plus: 20,
     Pro: 200,
     Team: 30,
-    Enterprise: 0,
+    Enterprise: null,
 
     API: {
       "GPT-5.5": {
@@ -92,6 +92,6 @@ export const pricing = {
     Free: 0,
     Team: 30,
     Business: 100,
-    Enterprise: 0,
+    Enterprise: null,
   },
 };

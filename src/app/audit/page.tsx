@@ -20,6 +20,7 @@ export default function AuditPage() {
   const [plan, setPlan] = useState("");
   const [teamSize, setTeamSize] = useState("");
   const [useCase, setUseCase] = useState("");
+  const [isAutoCalculated, setIsAutoCalculated] = useState(false);
 
   useEffect(() => {
     const savedTool = localStorage.getItem("tool");
@@ -52,10 +53,13 @@ export default function AuditPage() {
         plan as keyof (typeof pricing)[keyof typeof pricing]
       ];
 
-    if (typeof selectedPrice === "number") {
+    if (selectedPrice !== null && typeof selectedPrice === "number") {
       const total = selectedPrice * Number(seats);
 
       setMonthlySpend(String(total));
+      setIsAutoCalculated(true);
+    } else {
+      setMonthlySpend("");
     }
   }, [tool, plan, seats]);
   const toolPlans = Object.keys(pricing);
@@ -77,6 +81,7 @@ export default function AuditPage() {
               onChange={(e) => {
                 setTool(e.target.value);
                 setPlan("");
+                setMonthlySpend("");
               }}
               className="w-full rounded-xl border p-3"
             >
@@ -95,9 +100,26 @@ export default function AuditPage() {
             <input
               type="number"
               value={monthlySpend}
-              onChange={(e) => setMonthlySpend(e.target.value)}
-              className="w-full rounded-xl border p-3"
+              onChange={(e) => {
+                setMonthlySpend(e.target.value);
+                setIsAutoCalculated(false);
+              }}
+              className={`w-full rounded-xl border p-3 ${
+                isAutoCalculated ? "bg-gray-50 text-gray-500" : "bg-white"
+              }`}
             />
+            {isAutoCalculated && (
+              <p className="mt-2 text-sm text-gray-500">
+                Estimated from selected plan and seats. You can adjust this to
+                reflect actual monthly spending.
+              </p>
+            )}
+            {plan === "Enterprise" && (
+              <p className="mt-2 text-sm text-gray-500">
+                Enterprise pricing is custom and may vary depending on
+                organization size and contract terms.
+              </p>
+            )}
           </div>
 
           <div>
@@ -207,19 +229,19 @@ export default function AuditPage() {
 
               router.push("/results");
             }}
-            className="rounded-xl bg-black px-6 py-3 text-white"
+            className="rounded-xl border px-6 py-3"
           >
             Generate Audit
           </button>
           <button
             onClick={() => {
               if (
-                !tool ||
-                !plan ||
-                !monthlySpend ||
-                !seats ||
-                !teamSize ||
-                !useCase
+                tool === "" ||
+                plan === "" ||
+                monthlySpend === "" ||
+                seats === "" ||
+                teamSize === "" ||
+                useCase === ""
               ) {
                 alert("Please fill all fields.");
                 return;
@@ -243,31 +265,46 @@ export default function AuditPage() {
               setTeamSize("");
               setUseCase("");
             }}
-            className="mt-4 rounded-xl border px-6 py-3"
+            className="mt-4 rounded-xl bg-black px-6 py-3 text-white"
           >
             Add Subscription
           </button>
           <div className="mt-10 space-y-4">
             {subscriptions.map((sub, index) => (
-              <div key={index} className="rounded-xl border p-4">
+              <div
+                key={index}
+                className="rounded-2xl border bg-white p-5 shadow-sm"
+              >
                 <p>
                   <strong>Tool:</strong> {sub.tool}
                 </p>
 
-                <p>
-                  <strong>Plan:</strong> {sub.plan}
-                </p>
+                <div className="mt-2">
+                  <span className="inline-flex rounded-full bg-gray-100 px-3 py-1 text-sm font-medium">
+                    {sub.plan}
+                  </span>
+                </div>
 
                 <p>
                   <strong>Monthly Spend:</strong> ${sub.monthlySpend}
                 </p>
               </div>
             ))}
+            {subscriptions.length === 0 && (
+              <div className="rounded-2xl border border-dashed p-8 text-center text-gray-500">
+                No subscriptions added yet.
+              </div>
+            )}
           </div>
-          <p className="mt-6 text-2xl font-bold">
-            Total Monthly Spend: $
-            {subscriptions.reduce((total, sub) => total + sub.monthlySpend, 0)}
-          </p>
+          {subscriptions.length > 0 && (
+            <p className="mt-6 text-2xl font-bold">
+              Total Monthly Spend: $
+              {subscriptions.reduce(
+                (total, sub) => total + sub.monthlySpend,
+                0,
+              )}
+            </p>
+          )}
         </div>
       </div>
     </main>

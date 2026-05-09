@@ -1,4 +1,4 @@
-## Day 2 — 2026-05-07
+## Day 1 — 2026-05-07
 
 **Hours worked:** 0
 
@@ -28,3 +28,10 @@
 
 **Plan for tomorrow:**
 - Build the spend input form and local persistence.
+
+
+Which AI tools do you pay for right now? (ChatGPT, Cursor, Claude, etc.)
+Roughly how much do you spend on them per month?
+Do you feel like you're getting value for the money?
+Have you ever paid for a tool and then barely used it?
+If a free website could tell you exactly where you're overspending on AI, would you use it?
