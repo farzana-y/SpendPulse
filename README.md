@@ -1,36 +1,57 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# SpendPulse — Free AI Spend Audit
 
-## Getting Started
+SpendPulse helps startup founders and engineering managers find out 
+exactly where they're overspending on AI tools like Cursor, ChatGPT, 
+Claude, and GitHub Copilot — and what to do about it.
 
-First, run the development server:
+**[Live Demo →](your-deployed-url-here)**
+
+---
+
+## Screenshots
+
+*(add 2-3 screenshots here or a Loom link)*
+
+---
+
+## Quick Start
 
 ```bash
+git clone https://github.com/yourusername/spendpulse
+cd ai-spend-audit
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open http://localhost:3000
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Environment Variables
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Create a `.env.local` file:
+NEXT_PUBLIC_SUPABASE_URL=your_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_key
+GEMINI_API_KEY=your_key
 
-## Learn More
+---
 
-To learn more about Next.js, take a look at the following resources:
+## Decisions
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. **Next.js over plain React** — needed SSR for Open Graph tags on 
+   shareable audit URLs. Static React can't generate per-audit OG previews.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+2. **Hardcoded audit rules over AI** — the audit math uses deterministic 
+   rules, not an LLM. A finance person should be able to read the logic 
+   and agree with it. AI is only used for the summary paragraph where 
+   personalization matters and errors are low-stakes.
 
-## Deploy on Vercel
+3. **localStorage over a database for audit state** — no login required 
+   was a hard requirement. localStorage lets the tool work instantly 
+   without any backend. The tradeoff is audits don't persist across 
+   devices, which is acceptable for an MVP.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+4. **Vitest over Jest** — faster, works natively with TypeScript and 
+   Next.js without extra babel config. No meaningful tradeoff at this scale.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+5. **Supabase over custom Postgres** — free tier, instant setup, 
+   built-in auth if needed later. The tradeoff is vendor lock-in, 
+   but for an MVP the speed advantage is worth it.
