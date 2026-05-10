@@ -1,130 +1,242 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import ResultCard from "@/components/ResultCard";
+import Link from "next/link";
+
+type AuditResult = {
+  audit: {
+    currentSpend: number;
+    recommendedSpend: number;
+    savings: number;
+    annualSavings: number;
+    recommendation: string;
+    reason: string;
+  };
+  overlaps: {
+    title: string;
+    savings: number;
+    reason: string;
+  }[];
+  subscriptions: {
+    tool: string;
+    plan: string;
+    monthlySpend: number;
+    seats: number;
+    useCase: string;
+  }[];
+};
 
 export default function ResultsPage() {
-  type AuditResult = {
-    audit: {
-      currentSpend: number;
-      recommendedSpend: number;
-      savings: number;
-      annualSavings: number;
-      recommendation: string;
-      reason: string;
-    };
-    overlaps: {
-      title: string;
-      savings: number;
-      reason: string;
-    }[];
-    subscriptions: {
-      tool: string;
-      plan: string;
-      monthlySpend: number;
-      seats: number;
-      useCase: string;
-    }[];
-  };
   const [result, setResult] = useState<AuditResult | null>(null);
 
   useEffect(() => {
     const storedResult = localStorage.getItem("auditResult");
-
     if (storedResult) {
-      setResult(JSON.parse(storedResult));
+      try {
+        setResult(JSON.parse(storedResult));
+      } catch {
+        // corrupted data — ignore
+      }
     }
   }, []);
 
   if (!result) {
     return (
-      <main className="p-8">
-        <p>No audit result found.</p>
+      <main className="min-h-screen flex items-center justify-center bg-zinc-950">
+        <div className="text-center space-y-4">
+          <p className="text-zinc-400 text-lg">No audit result found.</p>
+          <Link
+            href="/audit"
+            className="inline-block bg-emerald-500 text-black font-semibold px-6 py-3 rounded-xl hover:bg-emerald-400 transition-colors"
+          >
+            Run an Audit
+          </Link>
+        </div>
       </main>
     );
   }
 
+  const totalOverlapSavings = (result.overlaps ?? []).reduce(
+    (sum, o) => sum + o.savings,
+    0
+  );
+  const totalMonthlySavings = result.audit.savings + totalOverlapSavings;
+  const totalAnnualSavings = totalMonthlySavings * 12;
+  const isOptimal = totalMonthlySavings === 0;
+  const isHighSavings = totalMonthlySavings >= 500;
+
   return (
-    <main className="min-h-screen p-8">
-      <div className="mx-auto max-w-4xl">
-        <h1 className="text-4xl font-bold">Audit Results</h1>
+    <main className="min-h-screen bg-zinc-950 text-white py-12 px-4">
+      <div className="mx-auto max-w-3xl space-y-10">
 
-        <div className="mt-6 grid gap-4 sm:grid-cols-2">
-          <ResultCard
-            title="Current Spend"
-            value={`$${result.audit.currentSpend}`}
-          />
-
-          <ResultCard
-            title="Recommended Spend"
-            value={`$${result.audit.recommendedSpend}`}
-          />
-
-          <ResultCard
-            title="Monthly Savings"
-            value={`$${result.audit.savings}`}
-          />
-
-          <ResultCard
-            title="Annual Savings"
-            value={`$${result.audit.annualSavings}`}
-          />
+        {/* Header */}
+        <div>
+          <Link href="/audit" className="text-zinc-500 text-sm hover:text-zinc-300 transition-colors">
+            ← Run another audit
+          </Link>
+          <h1 className="text-4xl font-bold mt-4 tracking-tight">
+            Your AI Spend Audit
+          </h1>
+          <p className="text-zinc-400 mt-2">
+            Here&apos;s what we found about your current AI subscriptions.
+          </p>
         </div>
-        <div className="mt-8 rounded-xl border p-5">
-          <h2 className="text-xl font-semibold">Recommendation</h2>
 
-          <p className="mt-3">{result.audit.recommendation}</p>
+        {/* Hero savings block */}
+        {isOptimal ? (
+          <div className="rounded-2xl border border-emerald-800 bg-emerald-950/40 p-8 text-center">
+            <div className="text-5xl mb-3">✓</div>
+            <h2 className="text-2xl font-bold text-emerald-400">You&apos;re spending well</h2>
+            <p className="text-zinc-400 mt-2">
+              No major optimizations detected for your current stack.
+            </p>
+          </div>
+        ) : (
+          <div className="rounded-2xl border border-emerald-700 bg-emerald-950/50 p-8">
+            <p className="text-emerald-400 text-sm font-semibold uppercase tracking-widest mb-4">
+              Potential Savings
+            </p>
+            <div className="flex flex-col sm:flex-row gap-8">
+              <div>
+                <p className="text-zinc-400 text-sm">Monthly</p>
+                <p className="text-5xl font-bold text-emerald-400 mt-1">
+                  ${totalMonthlySavings}
+                </p>
+              </div>
+              <div className="sm:border-l border-zinc-700 sm:pl-8">
+                <p className="text-zinc-400 text-sm">Annual</p>
+                <p className="text-5xl font-bold text-white mt-1">
+                  ${totalAnnualSavings}
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
 
-          <p className="mt-4 text-sm text-gray-600">{result.audit.reason}</p>
-        </div>
-        {result.overlaps?.length > 0 && (
-          <div className="mt-10">
-            <h2 className="text-2xl font-bold">Overlap Detection</h2>
+        {/* Credex CTA for high savings */}
+        {isHighSavings && (
+          <div className="rounded-2xl border border-amber-700 bg-amber-950/40 p-6 flex flex-col sm:flex-row items-start sm:items-center gap-4">
+            <div className="flex-1">
+              <h3 className="font-bold text-amber-400 text-lg">
+                You could save even more with Credex
+              </h3>
+              <p className="text-zinc-400 text-sm mt-1">
+                Credex sells discounted AI credits for Cursor, Claude, ChatGPT Enterprise and more — sourced from companies that overforecast. Book a free consultation to see what&apos;s available for your stack.
+              </p>
+            </div>
+            <a
+              href="https://credex.rocks"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="shrink-0 bg-amber-400 text-black font-semibold px-5 py-2.5 rounded-xl hover:bg-amber-300 transition-colors text-sm"
+            >
+              Book a consult →
+            </a>
+          </div>
+        )}
 
-            <div className="mt-4 space-y-4">
-              {result.overlaps.map((overlap, index) => (
-                <div key={index} className="rounded-xl border p-5">
-                  <h3 className="font-semibold">{overlap.title}</h3>
-
-                  <p className="mt-2 text-sm text-gray-600">{overlap.reason}</p>
-
-                  <p className="mt-3 font-bold">
-                    Potential Savings: ${overlap.savings}/month
+        {/* Per-tool breakdown */}
+        <div>
+          <h2 className="text-xl font-bold mb-4 text-zinc-100">Per-Tool Breakdown</h2>
+          <div className="space-y-4">
+            <div className="rounded-2xl border border-zinc-800 bg-zinc-900 p-6">
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex-1">
+                  <p className="text-zinc-400 text-sm">Recommendation</p>
+                  <p className="font-semibold mt-1 text-white">
+                    {result.audit.recommendation}
                   </p>
+                  <p className="text-zinc-500 text-sm mt-2">{result.audit.reason}</p>
+                </div>
+                {result.audit.savings > 0 && (
+                  <div className="text-right shrink-0">
+                    <p className="text-zinc-500 text-xs">Save</p>
+                    <p className="text-emerald-400 font-bold text-xl">
+                      ${result.audit.savings}/mo
+                    </p>
+                  </div>
+                )}
+              </div>
+              <div className="mt-4 pt-4 border-t border-zinc-800 grid grid-cols-2 gap-4 text-sm">
+                <div>
+                  <p className="text-zinc-500">Current spend</p>
+                  <p className="text-white font-medium mt-0.5">${result.audit.currentSpend}/mo</p>
+                </div>
+                <div>
+                  <p className="text-zinc-500">Recommended spend</p>
+                  <p className="text-emerald-400 font-medium mt-0.5">${result.audit.recommendedSpend}/mo</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Overlaps */}
+        {(result.overlaps ?? []).length > 0 && (
+          <div>
+            <h2 className="text-xl font-bold mb-4 text-zinc-100">Subscription Overlaps</h2>
+            <div className="space-y-4">
+              {result.overlaps.map((overlap, index) => (
+                <div key={index} className="rounded-2xl border border-zinc-800 bg-zinc-900 p-6">
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex-1">
+                      <p className="font-semibold text-white">{overlap.title}</p>
+                      <p className="text-zinc-500 text-sm mt-2">{overlap.reason}</p>
+                    </div>
+                    <div className="text-right shrink-0">
+                      <p className="text-zinc-500 text-xs">Save</p>
+                      <p className="text-emerald-400 font-bold text-xl">
+                        ${overlap.savings}/mo
+                      </p>
+                    </div>
+                  </div>
                 </div>
               ))}
             </div>
           </div>
         )}
-        <div className="mt-10">
-          <h2 className="text-2xl font-bold">Active Subscriptions</h2>
 
-          <div className="mt-4 space-y-4">
-            {result.subscriptions.map((sub, index) => (
-              <div key={index} className="rounded-xl border p-5">
-                <p>
-                  <strong>Tool:</strong> {sub.tool}
-                </p>
-
-                <p>
-                  <strong>Plan:</strong> {sub.plan}
-                </p>
-
-                <p>
-                  <strong>Monthly Spend:</strong> ${sub.monthlySpend}
-                </p>
-
-                <p>
-                  <strong>Seats:</strong> {sub.seats}
-                </p>
-
-                <p>
-                  <strong>Use Case:</strong> {sub.useCase}
-                </p>
-              </div>
-            ))}
+        {/* Active subscriptions */}
+        {(result.subscriptions ?? []).length > 0 && (
+          <div>
+            <h2 className="text-xl font-bold mb-4 text-zinc-100">Your Subscriptions</h2>
+            <div className="grid sm:grid-cols-2 gap-4">
+              {result.subscriptions.map((sub, index) => (
+                <div key={index} className="rounded-2xl border border-zinc-800 bg-zinc-900 p-5 space-y-2 text-sm">
+                  <div className="flex items-center justify-between">
+                    <p className="font-semibold text-white text-base">{sub.tool}</p>
+                    <span className="bg-zinc-800 text-zinc-300 px-2 py-0.5 rounded-md text-xs">
+                      {sub.plan}
+                    </span>
+                  </div>
+                  <div className="text-zinc-400 space-y-1 pt-1">
+                    <p>${sub.monthlySpend}/mo · {sub.seats} seat{sub.seats !== 1 ? "s" : ""}</p>
+                    <p>Use case: {sub.useCase}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
+        )}
+
+        {/* Low savings / optimal — notify CTA */}
+        {!isHighSavings && (
+          <div className="rounded-2xl border border-zinc-800 bg-zinc-900 p-6 text-center space-y-3">
+            <p className="text-zinc-300 font-medium">
+              Want to know when new optimizations apply to your stack?
+            </p>
+            <p className="text-zinc-500 text-sm">
+              We&apos;ll notify you when better pricing or alternatives become available.
+            </p>
+            <Link
+              href="/audit"
+              className="inline-block bg-zinc-800 hover:bg-zinc-700 text-white font-medium px-5 py-2.5 rounded-xl transition-colors text-sm"
+            >
+              Update my stack
+            </Link>
+          </div>
+        )}
+
       </div>
     </main>
   );

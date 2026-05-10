@@ -94,4 +94,24 @@ export const pricing = {
     Business: 100,
     Enterprise: null,
   },
+  Windsurf: {
+    Free: 0,
+    Pro: 15,
+    Teams: 30,
+    Enterprise: null,
+  },
+
+  "Anthropic API": {
+    "Pay-as-you-go": 0,
+    "Est. $500/mo spend": 500,
+    "Est. $1000/mo spend": 1000,
+    "Est. $2000/mo spend": 2000,
+  },
+
+  "OpenAI API": {
+    "Pay-as-you-go": 0,
+    "Est. $500/mo spend": 500,
+    "Est. $1000/mo spend": 1000,
+    "Est. $2000/mo spend": 2000,
+  },
 };

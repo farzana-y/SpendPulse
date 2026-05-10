@@ -53,8 +53,30 @@
 - Business: $100/user/month — https://v0.app/pricing — verified 09-05-2026
 - Enterprise: Custom Pricing — https://v0.app/pricing — verified 09-05-2026
 
+## Windsurf
+
+- Free: $0/month — https://windsurf.com/pricing — verified 10-05-2026
+- Pro: $15/user/month — https://windsurf.com/pricing — verified 10-05-2026
+- Teams: $30/user/month — https://windsurf.com/pricing — verified 10-05-2026
+- Enterprise: Custom pricing (est. ~$60/user/month) — https://windsurf.com/pricing — verified 10-05-2026
+
+## Anthropic API (Direct)
+
+- Pay-as-you-go: Usage-based, no monthly fee — https://www.anthropic.com/pricing — verified 10-05-2026
+- Claude Opus 4.7: $5.00 input / $25.00 output per MTok — https://www.anthropic.com/pricing — verified 10-05-2026
+- Claude Sonnet 4.6: $3.00 input / $15.00 output per MTok — https://www.anthropic.com/pricing — verified 10-05-2026
+- Claude Haiku 4.5: $1.00 input / $5.00 output per MTok — https://www.anthropic.com/pricing — verified 10-05-2026
+
+## OpenAI API (Direct)
+
+- Pay-as-you-go: Usage-based, no monthly fee — https://openai.com/api/pricing/ — verified 10-05-2026
+- GPT-5.5: $5.00 input / $30.00 output per MTok — https://openai.com/api/pricing/ — verified 10-05-2026
+- GPT-5.4: $2.50 input / $15.00 output per MTok — https://openai.com/api/pricing/ — verified 10-05-2026
+- o3: $3.50 input / $14.00 output per MTok — https://openai.com/api/pricing/ — verified 10-05-2026
 
 ## Notes
 
-- API pricing is usage-based and token-dependent. Monthly audit estimates for API usage are approximate and require user-provided consumption assumptions.
-- Enterprise pricing for several vendors is custom-quoted and estimated conservatively where necessary.
+- API pricing is usage-based and token-dependent. Monthly estimates require user-provided spend figures.
+- Enterprise pricing is custom-quoted; estimates used conservatively where noted.
+- Windsurf pricing sourced from official pricing page and corroborated by multiple third-party sources.
+
