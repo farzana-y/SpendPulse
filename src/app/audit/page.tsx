@@ -21,7 +21,7 @@ export default function AuditPage() {
   const [teamSize, setTeamSize] = useState("");
   const [useCase, setUseCase] = useState("");
   const [isAutoCalculated, setIsAutoCalculated] = useState(false);
-
+ 
   useEffect(() => {
     const savedTool = localStorage.getItem("tool");
     const savedSpend = localStorage.getItem("monthlySpend");
