@@ -4,7 +4,29 @@ import { useEffect, useState } from "react";
 import ResultCard from "@/components/ResultCard";
 
 export default function ResultsPage() {
-  const [result, setResult] = useState<any>(null);
+  type AuditResult = {
+    audit: {
+      currentSpend: number;
+      recommendedSpend: number;
+      savings: number;
+      annualSavings: number;
+      recommendation: string;
+      reason: string;
+    };
+    overlaps: {
+      title: string;
+      savings: number;
+      reason: string;
+    }[];
+    subscriptions: {
+      tool: string;
+      plan: string;
+      monthlySpend: number;
+      seats: number;
+      useCase: string;
+    }[];
+  };
+  const [result, setResult] = useState<AuditResult | null>(null);
 
   useEffect(() => {
     const storedResult = localStorage.getItem("auditResult");
@@ -26,7 +48,6 @@ export default function ResultsPage() {
     <main className="min-h-screen p-8">
       <div className="mx-auto max-w-4xl">
         <h1 className="text-4xl font-bold">Audit Results</h1>
-        
 
         <div className="mt-6 grid gap-4 sm:grid-cols-2">
           <ResultCard
@@ -61,7 +82,7 @@ export default function ResultsPage() {
             <h2 className="text-2xl font-bold">Overlap Detection</h2>
 
             <div className="mt-4 space-y-4">
-              {result.overlaps.map((overlap: any, index: number) => (
+              {result.overlaps.map((overlap, index) => (
                 <div key={index} className="rounded-xl border p-5">
                   <h3 className="font-semibold">{overlap.title}</h3>
 
@@ -79,7 +100,7 @@ export default function ResultsPage() {
           <h2 className="text-2xl font-bold">Active Subscriptions</h2>
 
           <div className="mt-4 space-y-4">
-            {result.subscriptions.map((sub: any, index: number) => (
+            {result.subscriptions.map((sub, index) => (
               <div key={index} className="rounded-xl border p-5">
                 <p>
                   <strong>Tool:</strong> {sub.tool}
