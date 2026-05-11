@@ -211,7 +211,7 @@ const selectedPrice = toolPricing?.[plan as keyof typeof toolPricing];
             >
               <option value="">Select a plan</option>
               {tool &&
-                Object.keys(pricing[tool] || {}).map((p) => (
+                Object.keys(pricing[tool as keyof typeof pricing] || {}).map((p) => (
                   <option key={p} value={p}>
                     {p}
                   </option>
