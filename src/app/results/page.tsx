@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import Navbar from "@/components/Navbar";
 
 type AuditResult = {
   audit: {
@@ -68,6 +69,7 @@ export default function ResultsPage() {
   return (
     <main className="min-h-screen bg-zinc-950 text-white py-12 px-4">
       <div className="mx-auto max-w-3xl space-y-10">
+        <Navbar />
 
         {/* Header */}
         <div>

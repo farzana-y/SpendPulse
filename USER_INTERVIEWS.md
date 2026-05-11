@@ -28,11 +28,11 @@ by specific use case and categorise by token efficiency confirmed that the
 urgency — he pointed out people are already self-educating on AI fast, so the 
 window to be the go-to audit tool is now, not later.
 
-## Interview 2 — Anonymous (Reddit), Heavy AI User / Vibe Coder
+## Interview 2 — J.D, Web app solo developer ,Vibe Coder
 
 **Date:** 2026-05-11
 **Duration:** async Reddit response
-**How I reached them:** Posted in r/artificial asking about AI spending habits
+**How I reached them:** Messaged in Reddit about AI spending habits
 
 **Direct quotes:**
 - "Using Cursor API billing since I don't care about subscription, 

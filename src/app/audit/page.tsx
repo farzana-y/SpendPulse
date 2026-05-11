@@ -3,6 +3,7 @@ import { detectOverlaps, generateAudit } from "@/lib/audit-engine";
 import { pricing } from "@/lib/pricing";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import Navbar from "@/components/Navbar";
 
 type Subscription = {
   tool: string;
@@ -161,6 +162,7 @@ const selectedPrice = toolPricing?.[plan as keyof typeof toolPricing];
 
   return (
     <main className="min-h-screen bg-zinc-950 text-white py-12 px-4">
+      <Navbar />
       <div className="mx-auto max-w-2xl">
         {/* Header */}
         <div className="mb-10">
