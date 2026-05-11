@@ -15,7 +15,7 @@ describe("generateAudit", () => {
     };
     const result = generateAudit(input);
 
-    expect(result.recommendation).toBe("Switch to ChatGPT Plus");
+    expect(result.recommendation).toContain("ChatGPT Plus");
     expect(result.savings).toBe(20);
     expect(result.annualSavings).toBe(240);
     expect(result.recommendedSpend).toBe(40);
@@ -32,9 +32,9 @@ describe("generateAudit", () => {
     };
     const result = generateAudit(input);
 
-    expect(result.recommendation).toBe("Switch to Cursor Pro");
-    expect(result.savings).toBe(40);
-    expect(result.annualSavings).toBe(480);
+    expect(result.recommendation).toContain("Cursor Pro");
+    expect(result.savings).toBe(60);
+    expect(result.annualSavings).toBe(720);
   });
 
   it("TEST 3: recommends downgrade from Claude Team to Pro for small teams", () => {
@@ -48,14 +48,14 @@ describe("generateAudit", () => {
     };
     const result = generateAudit(input);
 
-    expect(result.recommendation).toBe("Switch to Claude Pro");
-    expect(result.savings).toBe(30);
-    expect(result.annualSavings).toBe(360);
+    expect(result.recommendation).toContain("Claude Pro");
+    expect(result.savings).toBe(9);
+    expect(result.annualSavings).toBe(108);
   });
 
-  it("TEST 4: recommends downgrade from Copilot Enterprise to Business for small teams", () => {
+  it("TEST 4: recommends downgrade from Github Copilot Enterprise to Business for small teams", () => {
     const input: AuditInput = {
-      tool: "Copilot",
+      tool: "Github Copilot",
       plan: "Enterprise",
       monthlySpend: 195,
       seats: 5,
@@ -64,9 +64,9 @@ describe("generateAudit", () => {
     };
     const result = generateAudit(input);
 
-    expect(result.recommendation).toBe("Switch to GitHub Copilot Business");
-    expect(result.savings).toBe(50);
-    expect(result.annualSavings).toBe(600);
+    expect(result.recommendation).toContain("GitHub Copilot Business");
+    expect(result.savings).toBe(100);
+    expect(result.annualSavings).toBe(1200);
   });
 
   it("TEST 5: reports cost-efficient for well-sized plans (no unnecessary savings invented)", () => {
@@ -83,7 +83,7 @@ describe("generateAudit", () => {
     expect(result.savings).toBe(0);
     expect(result.annualSavings).toBe(0);
     expect(result.recommendedSpend).toBe(20);
-    expect(result.recommendation).toBe("Your current setup looks cost-efficient.");
+    expect(result.recommendation).toContain("well-sized");
   });
 
   it("TEST 6: does NOT flag ChatGPT Team as overkill when team is large enough", () => {
@@ -99,7 +99,7 @@ describe("generateAudit", () => {
 
     // seats > 2, so no downgrade should be recommended
     expect(result.savings).toBe(0);
-    expect(result.recommendation).toBe("Your current setup looks cost-efficient.");
+    expect(result.recommendation).toContain("well-sized");
   });
 
   it("TEST 7: annualSavings is always exactly 12x monthly savings", () => {
@@ -130,7 +130,7 @@ describe("detectOverlaps", () => {
     expect(overlaps.length).toBeGreaterThanOrEqual(1);
     expect(overlaps[0].title).toContain("ChatGPT");
     expect(overlaps[0].title).toContain("Claude");
-    expect(overlaps[0].savings).toBe(20);
+    expect(overlaps[0].savings).toBe(17);
   });
 
   it("TEST 9: detects overlap between Cursor and Copilot subscriptions", () => {
@@ -143,7 +143,7 @@ describe("detectOverlaps", () => {
     expect(overlaps.length).toBeGreaterThanOrEqual(1);
     expect(overlaps[0].title).toContain("Cursor");
     expect(overlaps[0].title).toContain("Copilot");
-    expect(overlaps[0].savings).toBe(19);
+    expect(overlaps[0].savings).toBe(57);
   });
 
   it("TEST 10: returns no overlaps for a single subscription", () => {

@@ -56,3 +56,33 @@ individual power users who've already made peace with their spend.
 Also noted his suggestion about API inference comparison as a potential 
 week 2 feature — a table comparing inference providers by price, speed, 
 and data policy would serve a real gap he identified.
+
+## Interview 3 — V.D, Developer / API User
+
+**Date:** 2026-05-11
+**Duration:** async Reddit response
+**How I reached them:** Messaged in Reddit about AI spending habits
+
+**Direct quotes:**
+- "I'm subscribed to like four different things that basically do 
+  the same job"
+- "I've started trying to consolidate everything by just using the 
+  API directly instead of paying for a bunch of different UI wrappers"
+- "It's way cheaper in the long run if you just pay for what you 
+  actually use"
+- "Unless a tool is giving me a specific workflow I can't build 
+  myself in five minutes, I've been hitting that unsubscribe button 
+  pretty fast lately"
+
+**Most surprising thing:** He's already doing his own manual version 
+of exactly what SpendPulse does — auditing his own stack and 
+unsubscribing from redundant tools. He arrived at the same conclusion 
+the product is built on, but through painful trial and error. This 
+validates the core problem completely.
+
+**What it changed about my design:** Reinforced that the overlap 
+detection feature is the most valuable part of the audit — not the 
+per-tool recommendations. Someone paying for "four things that do the 
+same job" is the exact user SpendPulse helps most. Also his point 
+about API-direct being cheaper than UI wrappers is now reflected in 
+the audit engine's overlap logic.

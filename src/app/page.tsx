@@ -99,7 +99,7 @@ export default function Home() {
               <path d="M3 12L6 7L9 9.5L13 4" stroke="black" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
           </div>
-          <span>SpendPulse by <a href="https://credex.rocks" className="hover:text-zinc-400 transition-colors">Credex</a></span>
+          <span>SpendPulse by Farzana </span>
         </div>
         <p>Free · No login required</p>
       </footer>
