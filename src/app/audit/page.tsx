@@ -56,7 +56,8 @@ export default function AuditPage() {
   // Auto-calculate spend from pricing data
   useEffect(() => {
     if (!tool || !plan || !seats) return;
-    const selectedPrice = pricing[tool]?.[plan];
+    const toolPricing = pricing[tool as keyof typeof pricing];
+const selectedPrice = toolPricing?.[plan as keyof typeof toolPricing];
     if (typeof selectedPrice === "number" && selectedPrice > 0) {
       setMonthlySpend(String(selectedPrice * Number(seats)));
       setIsAutoCalculated(true);
