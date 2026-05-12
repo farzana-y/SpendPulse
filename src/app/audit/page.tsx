@@ -39,7 +39,26 @@ export default function AuditPage() {
     if (saved) setSubscriptions(JSON.parse(saved));
   }, []);
 
-  // Persist form state
+  // Load persisted state on mount only
+  useEffect(() => {
+    setTool(localStorage.getItem("tool") ?? "");
+    setMonthlySpend(localStorage.getItem("monthlySpend") ?? "");
+    setSeats(localStorage.getItem("seats") ?? "");
+    setPlan(localStorage.getItem("plan") ?? "");
+    setTeamSize(localStorage.getItem("teamSize") ?? "");
+    setUseCase(localStorage.getItem("useCase") ?? "");
+
+    const saved = localStorage.getItem("subscriptions");
+    if (saved) {
+      try {
+        setSubscriptions(JSON.parse(saved));
+      } catch {
+        setSubscriptions([]);
+      }
+    }
+  }, []); // runs once on mount
+
+  // Persist form state when fields change
   useEffect(() => {
     localStorage.setItem("tool", tool);
     localStorage.setItem("monthlySpend", monthlySpend);
@@ -47,18 +66,9 @@ export default function AuditPage() {
     localStorage.setItem("plan", plan);
     localStorage.setItem("teamSize", teamSize);
     localStorage.setItem("useCase", useCase);
-    const hasResult = localStorage.getItem("auditResult");
-    if (hasResult) {
-      setSubscriptions([]);
-      localStorage.removeItem("subscriptions");
-      localStorage.removeItem("auditResult");
-    } else {
-      const saved = localStorage.getItem("subscriptions");
-      if (saved) setSubscriptions(JSON.parse(saved));
-    }
   }, [tool, monthlySpend, seats, plan, teamSize, useCase]);
 
-  // Persist subscriptions
+  // Persist subscriptions when list changes
   useEffect(() => {
     localStorage.setItem("subscriptions", JSON.stringify(subscriptions));
   }, [subscriptions]);
@@ -134,7 +144,6 @@ export default function AuditPage() {
       alert("Please add at least one subscription first.");
       return;
     }
-    
 
     const totalSpend = subscriptions.reduce(
       (total, sub) => total + sub.monthlySpend,

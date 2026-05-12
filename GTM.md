@@ -19,6 +19,14 @@ The person who is NOT the target: an individual developer at a large company
 where someone else controls the budget. They have no reason to act on savings
 they don't personally feel.
 
+This matched what I heard in user interviews. One freelance developer 
+discovered AI tools through Instagram Reels, not tech publications — 
+suggesting the audience is broader than just technical founders. Another 
+Reddit respondent already knew he was overpaying but hadn't acted because 
+there was no tool to quantify it. A third had four overlapping subscriptions 
+and was manually auditing them himself. All three pointed to the same gap: 
+the problem is real, the solution doesn't exist yet.
+
 ---
 
 ## What they Google or scroll through before wanting this tool

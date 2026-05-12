@@ -118,6 +118,11 @@ enterprise-level credit commitments ($10k+/deal).
 
 ## Key assumptions and risks
 
+These numbers are estimates built from first principles — I don't have 
+access to Credex's actual margins or conversion data. I've been 
+conservative where uncertain and flagged the key assumptions that would 
+most change the outcome if wrong.
+
 - Gross margin estimate (20–35%) is unverified — actual Credex margins may differ
 - Conversion rate from audit → consult (5–8%) assumes strong results page design
   and a genuine high-savings case — may be lower for well-optimized stacks
