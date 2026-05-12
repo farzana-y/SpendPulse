@@ -1,23 +1,15 @@
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
+
 export default function Home() {
   return (
     <main className="min-h-screen bg-zinc-950 text-white overflow-hidden">
-
-      {/* Navbar */}
       <Navbar />
 
       {/* Hero */}
       <section className="relative mx-auto flex max-w-4xl flex-col items-center justify-center px-6 py-28 text-center">
-
         {/* Subtle glow */}
         <div className="absolute top-20 left-1/2 -translate-x-1/2 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
-
-        {/* Badge */}
-        <div className="relative inline-flex items-center gap-2 rounded-full border border-emerald-800 bg-emerald-950/50 px-4 py-1.5 text-sm text-emerald-400 mb-8">
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-          Free for founders and engineering teams
-        </div>
 
         <h1 className="relative max-w-3xl text-5xl sm:text-6xl font-bold tracking-tight leading-tight">
           Stop overpaying for
@@ -25,7 +17,7 @@ export default function Home() {
         </h1>
 
         <p className="relative mt-6 max-w-xl text-lg text-zinc-400 leading-relaxed">
-            Audit your AI subscriptions in 60 seconds. See exactly where
+          Audit your AI subscriptions in 60 seconds. See exactly where
           you&apos;re overspending, what overlaps, and how much you could save.
         </p>
 
@@ -41,7 +33,7 @@ export default function Home() {
           </p>
         </div>
 
-        {/* Social proof */}
+        {/* Supported tools */}
         <div className="relative mt-16 flex flex-wrap justify-center gap-6 text-sm text-zinc-500">
           <span>✓ Cursor</span>
           <span>✓ ChatGPT</span>
@@ -96,14 +88,19 @@ export default function Home() {
         <div className="flex items-center gap-1.5">
           <div className="w-4 h-4 rounded bg-emerald-500 flex items-center justify-center">
             <svg width="10" height="10" viewBox="0 0 16 16" fill="none">
-              <path d="M3 12L6 7L9 9.5L13 4" stroke="black" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+              <path
+                d="M3 12L6 7L9 9.5L13 4"
+                stroke="black"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
             </svg>
           </div>
-          <span>SpendPulse by Farzana </span>
+          <span>SpendPulse</span>
         </div>
         <p>Free · No login required</p>
       </footer>
-
     </main>
   );
 }

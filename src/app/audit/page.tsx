@@ -47,6 +47,15 @@ export default function AuditPage() {
     localStorage.setItem("plan", plan);
     localStorage.setItem("teamSize", teamSize);
     localStorage.setItem("useCase", useCase);
+    const hasResult = localStorage.getItem("auditResult");
+    if (hasResult) {
+      setSubscriptions([]);
+      localStorage.removeItem("subscriptions");
+      localStorage.removeItem("auditResult");
+    } else {
+      const saved = localStorage.getItem("subscriptions");
+      if (saved) setSubscriptions(JSON.parse(saved));
+    }
   }, [tool, monthlySpend, seats, plan, teamSize, useCase]);
 
   // Persist subscriptions
@@ -125,6 +134,7 @@ export default function AuditPage() {
       alert("Please add at least one subscription first.");
       return;
     }
+    
 
     const totalSpend = subscriptions.reduce(
       (total, sub) => total + sub.monthlySpend,
