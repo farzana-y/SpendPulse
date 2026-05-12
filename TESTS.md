@@ -15,7 +15,9 @@ File: `src/lib/audit-engine.test.ts`
 | TEST 7 | Annual savings always = 12x monthly |
 | TEST 8 | ChatGPT + Claude overlap detected |
 | TEST 9 | Cursor + Copilot overlap detected |
-| TEST 10 | No overlap for single subscription |# TEST CASE 1 — ChatGPT + Claude overlap
+| TEST 10 | No overlap for single subscription |
+
+# TEST CASE 1 — ChatGPT + Claude overlap
 
 | Tool     | Plan | Spend | Seats | Team Size | Use Case |
 |-----------|------|--------|--------|------------|-----------|

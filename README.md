@@ -4,7 +4,7 @@ SpendPulse helps startup founders and engineering managers find out
 exactly where they're overspending on AI tools like Cursor, ChatGPT, 
 Claude, and GitHub Copilot — and what to do about it.
 
-**[Live Demo →](your-deployed-url-here)**
+**[Live Demo →] https://spend-pulse.vercel.app/**
 
 ---
 
@@ -17,7 +17,7 @@ Claude, and GitHub Copilot — and what to do about it.
 ## Quick Start
 
 ```bash
-git clone https://github.com/yourusername/spendpulse
+git clone https://github.com/farzana-y/SpendPulse
 cd ai-spend-audit
 npm install
 npm run dev

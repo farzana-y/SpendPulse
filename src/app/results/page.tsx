@@ -99,23 +99,9 @@ export default function ResultsPage() {
       });
   }, [result]);
 
-  const totalOverlapSavings = (result?.overlaps ?? []).reduce(
-    (sum, o) => sum + o.savings,
-    0,
-  );
-  const auditSavings = result?.audits.reduce((sum, a) => sum + a.savings, 0) ?? 0;
-  const totalMonthlySavings = auditSavings + totalOverlapSavings;
-
   if (!result) {
     return (
       <main className="min-h-screen bg-zinc-950">
-        {showModal && (
-          <ReportModal
-            totalMonthlySavings={totalMonthlySavings}
-            tools={result.subscriptions.map((s) => s.tool).join(", ")}
-            onClose={() => setShowModal(false)}
-          />
-        )}
         <Navbar />
         <div className="flex items-center justify-center min-h-[80vh]">
           <div className="text-center space-y-4">
@@ -131,12 +117,26 @@ export default function ResultsPage() {
       </main>
     );
   }
+
+  const totalOverlapSavings = (result.overlaps ?? []).reduce(
+    (sum, o) => sum + o.savings,
+    0,
+  );
+  const auditSavings = result.audits.reduce((sum, a) => sum + a.savings, 0);
+  const totalMonthlySavings = auditSavings + totalOverlapSavings;
   const totalAnnualSavings = totalMonthlySavings * 12;
   const isOptimal = totalMonthlySavings === 0;
   const isHighSavings = totalMonthlySavings >= 500;
 
   return (
     <main className="min-h-screen bg-zinc-950 text-white">
+      {showModal && (
+        <ReportModal
+          totalMonthlySavings={totalMonthlySavings}
+          tools={result.subscriptions.map((s) => s.tool).join(", ")}
+          onClose={() => setShowModal(false)}
+        />
+      )}
       <Navbar />
       <div className="mx-auto max-w-3xl px-4 py-12 space-y-10">
         {/* Header */}
