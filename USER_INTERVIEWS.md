@@ -86,3 +86,39 @@ per-tool recommendations. Someone paying for "four things that do the
 same job" is the exact user SpendPulse helps most. Also his point 
 about API-direct being cheaper than UI wrappers is now reflected in 
 the audit engine's overlap logic.
+
+## Interview 4 — Founder, Wellphases
+
+**Date:** 2026-05-11  
+**Duration:** async Reddit response  
+**How I reached them:** Messaged in Reddit about AI spending habits  
+
+**Direct quotes:**
+- "Claude code with other models totally saves a lot for me"
+- "I pay for Claude Pro and mostly API costs"
+- "Not really cause I know where I spent quite clearly"
+
+**Tools mentioned:**
+- Claude Pro
+- Claude Code
+- Gemini
+- ChatGPT
+- Direct API usage
+
+**Most surprising thing:**  
+This user intentionally maintains multiple AI subscriptions and APIs at the same time, but does not consider it wasteful. Unlike earlier interviewees trying to reduce overlap, this founder sees different models as specialized tools within a workflow stack. The important distinction was visibility and intentionality — they were comfortable paying more because they clearly understood where the money was going and why.
+
+**What it changed about my design:**  
+This challenged one of the biggest assumptions in the project: overlap does not automatically equal overspending. Advanced users and founders may deliberately combine multiple models for reliability, experimentation, or workflow specialization. Because of this, SpendPulse should avoid aggressively recommending cancellation when the stack appears intentional and well-understood.  
+
+It also introduced the idea of:
+- distinguishing between accidental overlap and intentional multi-model workflows
+- detecting “power user” behavior differently from casual subscriptions
+- providing optimization confidence instead of assuming every duplicate tool should be removed
+
+**Potential future feature inspired by this interview:**  
+An "Intentional Stack" indicator that recognizes when users are strategically combining tools rather than wasting money — for example:
+- Claude for coding
+- ChatGPT for writing/reasoning
+- Gemini for large context workflows
+- APIs for production automation

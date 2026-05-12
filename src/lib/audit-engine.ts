@@ -65,9 +65,10 @@ export function generateAudit(input: AuditInput): AuditOutput {
       savings = (39 - 10) * seats;
       reason = `Copilot Pro+ at $39/user unlocks frontier models. For non-coding use cases like ${useCase.toLowerCase()}, standard Pro at $10/user provides the same core completions at 74% less cost.`;
     } else if (plan === "Business" && seats <= 2) {
-      recommendation = "Switch to GitHub Copilot Pro ($10/user)";
+      recommendation =
+        "Switch to GitHub Copilot Pro ($10/user) or Cursor Pro ($20/user)";
       savings = (19 - 10) * seats;
-      reason = `Copilot Business is designed for teams needing centralized policy management. For ${seats} individual developers, Pro at $10/user covers the same AI assistance without team overhead cost.`;
+      reason = `GitHub Copilot Business is designed for larger engineering teams needing centralized policy management. For ${seats} developers, Copilot Pro at $10/user is more cost-efficient. Teams wanting deeper AI-native workflows may also consider Cursor Pro as an alternative coding environment.`;
     } else {
       recommendation = "Your GitHub Copilot plan looks appropriate.";
       savings = 0;
@@ -97,6 +98,15 @@ export function generateAudit(input: AuditInput): AuditOutput {
       recommendation = "Switch to Claude Pro ($17/user)";
       savings = (20 - 17) * seats;
       reason = `Claude Team Standard's collaboration features add minimal value for ${seats} users. Pro at $17/user provides the same AI access at a slightly lower cost — team features become worthwhile at 3+ seats.`;
+    } else if (
+      plan === "Max" &&
+      useCase !== "Coding" &&
+      useCase !== "Research"
+    ) {
+      recommendation =
+        "Downgrade to Claude Pro ($17/user) or consider ChatGPT Plus ($20/user)";
+      savings = (100 - 17) * seats;
+      reason = `Claude Max is designed for users who regularly hit Pro's usage limits — typically heavy coders and researchers. For ${useCase.toLowerCase()} use cases, Pro at $17/user provides sufficient access at 83% less cost. Teams focused on general-purpose AI assistance may also find ChatGPT Plus ($20/user) a viable alternative with comparable capabilities for non-specialized workflows.`;
     } else {
       recommendation = "Your Claude plan looks well-sized.";
       savings = 0;
@@ -112,9 +122,10 @@ export function generateAudit(input: AuditInput): AuditOutput {
       savings = (200 - 30) * seats;
       reason = `ChatGPT Pro at $200/user is an individual unlimited-access plan. For teams, Team at $30/user provides collaborative workspaces at 85% less per seat. At ${seats} seats: $${200 * seats}/mo vs $${30 * seats}/mo.`;
     } else if (plan === "Pro" && useCase === "Writing") {
-      recommendation = "Downgrade to ChatGPT Plus ($20/user)";
+      recommendation =
+        "Downgrade to ChatGPT Plus ($20/user) or consider Claude Pro ($17/user) for writing-heavy workflows";
       savings = (200 - 20) * seats;
-      reason = `ChatGPT Pro's unlimited o1/o3 reasoning is overkill for writing workflows. Plus at $20/mo provides GPT-4o access which is more than sufficient for content creation at 90% less cost.`;
+      reason = `ChatGPT Pro's unlimited reasoning models are typically unnecessary for writing-focused workflows. ChatGPT Plus at $20/user provides GPT-4o access which is sufficient for most content creation tasks at 90% lower cost. Teams primarily focused on long-form writing and editing may also find Claude Pro ($17/user) a cheaper alternative with comparable writing quality.`;
     } else if (plan === "Team" && seats <= 2) {
       recommendation = "Switch to ChatGPT Plus ($20/user)";
       savings = (30 - 20) * seats;
@@ -134,9 +145,12 @@ export function generateAudit(input: AuditInput): AuditOutput {
       savings = Math.round((249.99 - 19.99) * seats);
       reason = `Gemini AI Ultra at $249.99/user targets enterprise power users needing Gemini's highest-tier models. For most ${useCase.toLowerCase()} workflows, AI Pro at $19.99 provides capable model access at 92% less cost — saving $${Math.round((249.99 - 19.99) * seats)}/mo.`;
     } else if (plan === "AI Pro" && useCase === "Coding") {
-      recommendation = "Consider switching to Cursor Pro ($20/user) for coding";
+      recommendation =
+        "Consider Cursor Pro ($20/user) or GitHub Copilot Pro ($10/user) for coding-focused workflows";
+
       savings = 0;
-      reason = `Gemini AI Pro gives Gemini model access via chat interface. For coding workflows, a dedicated AI code editor like Cursor Pro ($20/user) provides deeper IDE integration and codebase context — better ROI for coding at the same price point.`;
+
+      reason = `Gemini AI Pro provides strong general-purpose AI capabilities, but dedicated coding tools like Cursor Pro and GitHub Copilot Pro offer deeper IDE integration, codebase awareness, and debugging workflows. For engineering-heavy teams, those tools often provide better productivity ROI at a similar or lower price point.`;
     } else {
       recommendation = "Your Gemini plan looks appropriate.";
       savings = 0;
@@ -151,9 +165,10 @@ export function generateAudit(input: AuditInput): AuditOutput {
       savings = (100 - 30) * seats;
       reason = `v0 Business at $100/user is designed for larger organizations. For teams under 5, Team at $30/user covers the same generative UI capabilities at 70% less cost — saving $${(100 - 30) * seats}/mo.`;
     } else if (plan === "Team" && useCase !== "Coding") {
-      recommendation = "Downgrade to v0 Free tier";
+      recommendation =
+        "Downgrade to v0 Free tier or Cursor Pro ($20/user) for coding use cases";
       savings = 30 * seats;
-      reason = `v0 is a UI component generation tool for developers. For ${useCase.toLowerCase()} use cases, the free tier's monthly credits are likely sufficient — paid plans are only worth it for daily frontend development.`;
+      reason = `v0 is optimized for frontend UI generation workflows. For non-development use cases, the free tier is likely sufficient. Developers already using Cursor may also find overlapping UI generation capabilities through Cursor's AI composer features.`;
     } else {
       recommendation = "Your v0 plan looks appropriate.";
       savings = 0;
@@ -179,9 +194,11 @@ export function generateAudit(input: AuditInput): AuditOutput {
   else if (tool === "Anthropic API" || tool === "OpenAI API") {
     const provider = tool === "Anthropic API" ? "Anthropic" : "OpenAI";
     if (monthlySpend >= 1000) {
-      recommendation = "Negotiate committed use discounts with " + provider;
+      recommendation =
+        "Your usage is large enough to qualify for lower enterprise pricing from " +
+        provider;
       savings = Math.round(monthlySpend * 0.15);
-      reason = `At $${monthlySpend}/mo API spend, you qualify for committed use pricing from ${provider} which typically offers 15-25% discounts on pre-committed volume. At your spend level this conversation is worth having — potential saving: $${Math.round(monthlySpend * 0.15)}/mo.`;
+      reason = `At roughly $${monthlySpend}/mo in API usage, your company may qualify for discounted enterprise pricing from ${provider}. Businesses at this level often reduce costs by committing to predictable monthly usage or negotiating volume-based pricing. Estimated potential savings: $${Math.round(monthlySpend * 0.15)}/mo.`;
     } else if (monthlySpend >= 500) {
       recommendation = "Enable prompt caching and batch API";
       savings = Math.round(monthlySpend * 0.3);

@@ -4,15 +4,18 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
 
+type AuditItem = {
+  tool: string;
+  currentSpend: number;
+  recommendedSpend: number;
+  savings: number;
+  annualSavings: number;
+  recommendation: string;
+  reason: string;
+};
+
 type AuditResult = {
-  audit: {
-    currentSpend: number;
-    recommendedSpend: number;
-    savings: number;
-    annualSavings: number;
-    recommendation: string;
-    reason: string;
-  };
+  audits: AuditItem[];
   overlaps: {
     title: string;
     savings: number;
@@ -31,6 +34,7 @@ export default function ResultsPage() {
   const [result, setResult] = useState<AuditResult | null>(null);
   const [summary, setSummary] = useState<string>("");
   const [summaryLoading, setSummaryLoading] = useState(false);
+  const [usedFallback, setUsedFallback] = useState(false);
 
   useEffect(() => {
     const storedResult = localStorage.getItem("auditResult");
@@ -49,19 +53,32 @@ export default function ResultsPage() {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
+        audit: result.audits,
+        overlaps: result.overlaps ?? [],
         subscriptions: result.subscriptions ?? [],
-        totalSavings: result.audit.savings,
-        annualSavings: result.audit.annualSavings,
       }),
     })
-      .then((r) => r.json())
-      .then((data) => setSummary(data.summary))
+      .then(async (r) => {
+        const data = await r.json();
+
+        console.log("SUMMARY RESPONSE:", data);
+
+        setSummary(data.summary);
+        setUsedFallback(!!data.fallback);
+      })
       .catch(() =>
         setSummary(
           "Based on your subscriptions, there are opportunities to optimize your AI spend by right-sizing plans and consolidating overlapping tools.",
         ),
       )
       .finally(() => setSummaryLoading(false));
+    {
+      usedFallback && (
+        <p className="text-xs text-amber-500 mt-3">
+          AI summary temporarily unavailable — showing fallback summary.
+        </p>
+      );
+    }
   }, [result]);
 
   if (!result) {
@@ -84,7 +101,12 @@ export default function ResultsPage() {
     (sum, o) => sum + o.savings,
     0,
   );
-  const totalMonthlySavings = result.audit.savings + totalOverlapSavings;
+  const auditSavings = result.audits.reduce(
+    (sum, audit) => sum + audit.savings,
+    0,
+  );
+
+  const totalMonthlySavings = auditSavings + totalOverlapSavings;
   const totalAnnualSavings = totalMonthlySavings * 12;
   const isOptimal = totalMonthlySavings === 0;
   const isHighSavings = totalMonthlySavings >= 500;
@@ -183,46 +205,65 @@ export default function ResultsPage() {
         )}
 
         {/* Per-tool breakdown */}
+
         <div>
           <h2 className="text-xl font-bold mb-4 text-zinc-100">
             Per-Tool Breakdown
           </h2>
+
           <div className="space-y-4">
-            <div className="rounded-2xl border border-zinc-800 bg-zinc-900 p-6">
-              <div className="flex items-start justify-between gap-4">
-                <div className="flex-1">
-                  <p className="text-zinc-400 text-sm">Recommendation</p>
-                  <p className="font-semibold mt-1 text-white">
-                    {result.audit.recommendation}
-                  </p>
-                  <p className="text-zinc-500 text-sm mt-2">
-                    {result.audit.reason}
-                  </p>
+            {result.audits.map((audit, index) => (
+              <div
+                key={index}
+                className="rounded-2xl border border-zinc-800 bg-zinc-900 p-6"
+              >
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-2">
+                      <h3 className="font-bold text-lg text-white">
+                        {audit.tool}
+                      </h3>
+                    </div>
+
+                    <p className="text-zinc-400 text-sm">Recommendation</p>
+
+                    <p className="font-semibold mt-1 text-white">
+                      {audit.recommendation}
+                    </p>
+
+                    <p className="text-zinc-500 text-sm mt-2">{audit.reason}</p>
+                  </div>
+
+                  {audit.savings > 0 && (
+                    <div className="text-right shrink-0">
+                      <p className="text-zinc-500 text-xs">Save</p>
+
+                      <p className="text-emerald-400 font-bold text-xl">
+                        ${audit.savings}/mo
+                      </p>
+                    </div>
+                  )}
                 </div>
-                {result.audit.savings > 0 && (
-                  <div className="text-right shrink-0">
-                    <p className="text-zinc-500 text-xs">Save</p>
-                    <p className="text-emerald-400 font-bold text-xl">
-                      ${result.audit.savings}/mo
+
+                <div className="mt-4 pt-4 border-t border-zinc-800 grid grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <p className="text-zinc-500">Current spend</p>
+
+                    <p className="text-white font-medium mt-0.5">
+                      ${audit.currentSpend}/mo
                     </p>
                   </div>
-                )}
-              </div>
-              <div className="mt-4 pt-4 border-t border-zinc-800 grid grid-cols-2 gap-4 text-sm">
-                <div>
-                  <p className="text-zinc-500">Current spend</p>
-                  <p className="text-white font-medium mt-0.5">
-                    ${result.audit.currentSpend}/mo
-                  </p>
-                </div>
-                <div>
-                  <p className="text-zinc-500">Recommended spend</p>
-                  <p className="text-emerald-400 font-medium mt-0.5">
-                    ${result.audit.recommendedSpend}/mo
-                  </p>
+
+                  <div>
+                    <p className="text-zinc-500">Recommended spend</p>
+
+                    <p className="text-emerald-400 font-medium mt-0.5">
+                      ${audit.recommendedSpend}/mo
+                    </p>
+                  </div>
                 </div>
               </div>
-            </div>
+            ))}
           </div>
         </div>
 

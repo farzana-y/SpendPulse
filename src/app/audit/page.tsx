@@ -58,7 +58,7 @@ export default function AuditPage() {
   useEffect(() => {
     if (!tool || !plan || !seats) return;
     const toolPricing = pricing[tool as keyof typeof pricing];
-const selectedPrice = toolPricing?.[plan as keyof typeof toolPricing];
+    const selectedPrice = toolPricing?.[plan as keyof typeof toolPricing];
     if (typeof selectedPrice === "number" && selectedPrice > 0) {
       setMonthlySpend(String(selectedPrice * Number(seats)));
       setIsAutoCalculated(true);
@@ -67,6 +67,26 @@ const selectedPrice = toolPricing?.[plan as keyof typeof toolPricing];
       setIsAutoCalculated(false);
     }
   }, [tool, plan, seats]);
+
+  const defaultUseCases = [
+    "Writing",
+    "Coding",
+    "Research",
+    "Design",
+    "Marketing",
+    "Mixed",
+  ];
+
+  const apiUseCases = [
+    "AI App",
+    "Customer Support Bot",
+    "Internal Tool",
+    "Automation",
+    "Research Pipeline",
+    "AI Coding Assistant",
+    "Document Processing",
+    "Chatbot",
+  ];
 
   const isFormValid =
     tool !== "" &&
@@ -135,18 +155,14 @@ const selectedPrice = toolPricing?.[plan as keyof typeof toolPricing];
           : bestAudit.reason
         : "No major redundant spending detected.";
 
-    const audit = {
-      currentSpend: totalSpend,
-      recommendedSpend: totalSpend - totalSavings,
-      savings: totalSavings,
-      annualSavings: totalSavings * 12,
-      recommendation,
-      reason,
-    };
+    const audits = subscriptions.map((sub) => ({
+      tool: sub.tool,
+      ...generateAudit(sub),
+    }));
 
     localStorage.setItem(
       "auditResult",
-      JSON.stringify({ audit, overlaps, subscriptions }),
+      JSON.stringify({ audits, overlaps, subscriptions }),
     );
     router.push("/results");
   };
@@ -213,11 +229,13 @@ const selectedPrice = toolPricing?.[plan as keyof typeof toolPricing];
             >
               <option value="">Select a plan</option>
               {tool &&
-                Object.keys(pricing[tool as keyof typeof pricing] || {}).map((p) => (
-                  <option key={p} value={p}>
-                    {p}
-                  </option>
-                ))}
+                Object.keys(pricing[tool as keyof typeof pricing] || {}).map(
+                  (p) => (
+                    <option key={p} value={p}>
+                      {p}
+                    </option>
+                  ),
+                )}
             </select>
           </div>
 

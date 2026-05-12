@@ -25,8 +25,8 @@ export default function Home() {
         </h1>
 
         <p className="relative mt-6 max-w-xl text-lg text-zinc-400 leading-relaxed">
-          Audit your AI subscriptions in 60 seconds. See exactly where
-          you're overspending, what overlaps, and how much you could save.
+            Audit your AI subscriptions in 60 seconds. See exactly where
+          you&apos;re overspending, what overlaps, and how much you could save.
         </p>
 
         <div className="relative mt-10 flex flex-col sm:flex-row items-center gap-4">
