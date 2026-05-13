@@ -183,6 +183,7 @@ export default function AuditPage() {
       "auditResult",
       JSON.stringify({ audits, overlaps, subscriptions }),
     );
+    localStorage.removeItem("auditShareId"); // clear old shareable URL so a new one is generated
     router.push("/results");
   };
   const totalSpend = subscriptions.reduce(

@@ -37,6 +37,8 @@ export default function ResultsPage() {
   const [summaryLoading, setSummaryLoading] = useState(false);
   const [usedFallback, setUsedFallback] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [shareUrl, setShareUrl] = useState<string>("");
+  const [shareCopied, setShareCopied] = useState(false);
 
   useEffect(() => {
     const storedResult = localStorage.getItem("auditResult");
@@ -48,6 +50,33 @@ export default function ResultsPage() {
       }
     }
   }, []);
+
+  // Save audit to Supabase and generate shareable URL
+  useEffect(() => {
+    if (!result) return;
+    const alreadySaved = localStorage.getItem("auditShareId");
+    if (alreadySaved) {
+      setShareUrl(`${window.location.origin}/results/${alreadySaved}`);
+      return;
+    }
+    fetch("/api/audits", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        audits: result.audits,
+        overlaps: result.overlaps ?? [],
+        subscriptions: result.subscriptions ?? [],
+      }),
+    })
+      .then(async (r) => {
+        if (r.ok) {
+          const { id } = await r.json();
+          localStorage.setItem("auditShareId", id);
+          setShareUrl(`${window.location.origin}/results/${id}`);
+        }
+      })
+      .catch(() => {}); // non-fatal
+  }, [result]);
 
   useEffect(() => {
     if (!result) return;
@@ -153,6 +182,23 @@ export default function ResultsPage() {
           <p className="text-zinc-400 mt-2">
             Here&apos;s what we found about your current AI subscriptions.
           </p>
+          {shareUrl && (
+            <div className="mt-4 flex items-center gap-3">
+              <div className="flex-1 min-w-0 bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-zinc-400 truncate">
+                {shareUrl}
+              </div>
+              <button
+                onClick={() => {
+                  navigator.clipboard.writeText(shareUrl);
+                  setShareCopied(true);
+                  setTimeout(() => setShareCopied(false), 2000);
+                }}
+                className="shrink-0 bg-zinc-700 hover:bg-zinc-600 text-white text-sm px-4 py-2 rounded-lg transition-colors"
+              >
+                {shareCopied ? "✓ Copied!" : "Copy link"}
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Hero savings block */}

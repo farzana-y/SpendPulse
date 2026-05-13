@@ -10,7 +10,14 @@ Claude, and GitHub Copilot — and what to do about it.
 
 ## Screenshots
 
-*(add 2-3 screenshots here or a Loom link)*
+> **Add 2–3 screenshots here before submitting:**
+> 1. Landing page (`/`) — hero section
+> 2. Audit form (`/audit`) — with subscriptions filled in
+> 3. Results page (`/results`) — showing savings breakdown + shareable URL
+>
+> Take screenshots from your live Vercel URL and drag them into this section on GitHub, or add a 30-second Loom recording link.
+>
+> **Live demo:** https://spend-pulse.vercel.app
 
 ---
 
