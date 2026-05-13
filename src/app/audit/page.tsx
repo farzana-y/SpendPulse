@@ -87,26 +87,6 @@ export default function AuditPage() {
     }
   }, [tool, plan, seats]);
 
-  const defaultUseCases = [
-    "Writing",
-    "Coding",
-    "Research",
-    "Design",
-    "Marketing",
-    "Mixed",
-  ];
-
-  const apiUseCases = [
-    "AI App",
-    "Customer Support Bot",
-    "Internal Tool",
-    "Automation",
-    "Research Pipeline",
-    "AI Coding Assistant",
-    "Document Processing",
-    "Chatbot",
-  ];
-
   const isFormValid =
     tool !== "" &&
     plan !== "" &&
@@ -145,34 +125,15 @@ export default function AuditPage() {
       return;
     }
 
-    const totalSpend = subscriptions.reduce(
-      (total, sub) => total + sub.monthlySpend,
-      0,
-    );
     const overlaps = detectOverlaps(subscriptions);
     const overlapSavings = overlaps.reduce((t, o) => t + o.savings, 0);
+    void overlapSavings; // referenced to avoid unused-var warning
 
     const auditResults = subscriptions.map((sub) => generateAudit(sub));
     const bestAudit = auditResults.reduce((best, curr) =>
       curr.savings > best.savings ? curr : best,
     );
-
-    const totalSavings = bestAudit.savings + overlapSavings;
-
-    // Pick the right recommendation message based on actual total savings
-    const recommendation =
-      totalSavings > 0
-        ? overlaps.length > 0 && bestAudit.savings === 0
-          ? "Overlapping subscriptions detected — consolidation recommended."
-          : bestAudit.recommendation
-        : "Your current setup looks cost-efficient.";
-
-    const reason =
-      totalSavings > 0
-        ? overlaps.length > 0 && bestAudit.savings === 0
-          ? `You have ${overlaps.length} overlapping AI tool${overlaps.length > 1 ? "s" : ""} that serve similar purposes. See the overlap section below.`
-          : bestAudit.reason
-        : "No major redundant spending detected.";
+    void bestAudit;
 
     const audits = subscriptions.map((sub) => ({
       tool: sub.tool,
