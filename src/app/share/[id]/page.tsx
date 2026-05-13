@@ -1,5 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
 import { notFound } from "next/navigation";
+import Link from "next/link";
 
 type Props = { params: { id: string } };
 
@@ -23,7 +24,7 @@ export async function generateMetadata({ params }: Props) {
 export default async function SharePage({ params }: Props) {
   const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
   );
 
   const { data, error } = await supabase
@@ -39,7 +40,8 @@ export default async function SharePage({ params }: Props) {
   const subscriptions = data.subscriptions ?? [];
 
   const totalOverlapSavings = overlaps.reduce(
-    (sum: number, o: { savings: number }) => sum + o.savings, 0
+    (sum: number, o: { savings: number }) => sum + o.savings,
+    0,
   );
   const totalMonthlySavings = audit.savings + totalOverlapSavings;
 
@@ -50,8 +52,13 @@ export default async function SharePage({ params }: Props) {
           <div className="flex items-center justify-center gap-2 mb-6">
             <div className="w-7 h-7 rounded-lg bg-emerald-500 flex items-center justify-center">
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                <path d="M3 12L6 7L9 9.5L13 4" stroke="black" strokeWidth="2"
-                  strokeLinecap="round" strokeLinejoin="round" />
+                <path
+                  d="M3 12L6 7L9 9.5L13 4"
+                  stroke="black"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
               </svg>
             </div>
             <span className="font-bold text-lg">
@@ -60,7 +67,8 @@ export default async function SharePage({ params }: Props) {
           </div>
           <h1 className="text-3xl font-bold">Shared AI Spend Audit</h1>
           <p className="text-zinc-400">
-            This audit was generated with SpendPulse — free AI subscription auditor.
+            This audit was generated with SpendPulse — free AI subscription
+            auditor.
           </p>
         </div>
 
@@ -72,38 +80,56 @@ export default async function SharePage({ params }: Props) {
             <p className="text-5xl font-bold text-emerald-400">
               ${totalMonthlySavings}/mo
             </p>
-            <p className="text-zinc-400 mt-1">${totalMonthlySavings * 12}/year</p>
+            <p className="text-zinc-400 mt-1">
+              ${totalMonthlySavings * 12}/year
+            </p>
           </div>
         ) : (
           <div className="rounded-2xl border border-emerald-800 bg-emerald-950/40 p-8 text-center">
             <p className="text-2xl mb-2">✓</p>
-            <p className="text-emerald-400 font-bold">Stack is well optimized</p>
+            <p className="text-emerald-400 font-bold">
+              Stack is well optimized
+            </p>
           </div>
         )}
 
         <div className="space-y-3">
-          {subscriptions.map((sub: {
-            tool: string; plan: string;
-            monthlySpend: number; seats: number
-          }, i: number) => (
-            <div key={i} className="rounded-2xl border border-zinc-800 bg-zinc-900 p-4 flex justify-between">
-              <div>
-                <p className="font-semibold text-white">{sub.tool}</p>
-                <p className="text-zinc-500 text-sm">{sub.plan} · {sub.seats} seat{sub.seats !== 1 ? "s" : ""}</p>
+          {subscriptions.map(
+            (
+              sub: {
+                tool: string;
+                plan: string;
+                monthlySpend: number;
+                seats: number;
+              },
+              i: number,
+            ) => (
+              <div
+                key={i}
+                className="rounded-2xl border border-zinc-800 bg-zinc-900 p-4 flex justify-between"
+              >
+                <div>
+                  <p className="font-semibold text-white">{sub.tool}</p>
+                  <p className="text-zinc-500 text-sm">
+                    {sub.plan} · {sub.seats} seat{sub.seats !== 1 ? "s" : ""}
+                  </p>
+                </div>
+                <p className="text-white font-bold">${sub.monthlySpend}/mo</p>
               </div>
-              <p className="text-white font-bold">${sub.monthlySpend}/mo</p>
-            </div>
-          ))}
+            ),
+          )}
         </div>
 
         <div className="rounded-2xl border border-zinc-800 bg-zinc-900 p-6 text-center space-y-3">
-          <p className="text-white font-semibold">Audit your own AI stack — free</p>
-          <a
+          <p className="text-white font-semibold">
+            Audit your own AI stack — free
+          </p>
+          <Link
             href="/"
             className="inline-block bg-emerald-500 hover:bg-emerald-400 text-black font-bold px-6 py-3 rounded-xl transition-colors"
           >
             Get My Free Audit →
-          </a>
+          </Link>
         </div>
       </div>
     </main>
