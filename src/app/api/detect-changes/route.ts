@@ -19,21 +19,21 @@ type AuditRow = {
   email: string;
   subscriptions_data: Subscription[];
   audits_data: { tool: string; savings: number; recommendation: string; reason: string }[];
-  pricing_snapshot: Record<string, Record<string, number>>;
+  pricing_snapshot: Record<string, Record<string, number | null>>;
 };
 
 function getPriceFromSnapshot(
-  snapshot: Record<string, Record<string, number>>,
+  snapshot: Record<string, Record<string, number | null>>,
   tool: string,
   plan: string
 ): number | null {
-  return snapshot?.[tool]?.[plan] ?? null;
+  const price = snapshot?.[tool]?.[plan];
+  return typeof price === "number" ? price : null;
 }
 
-function detectPricingChanges(snapshot: Record<string, Record<string, number>>) {
+function detectPricingChanges(snapshot: Record<string, Record<string, number | null>>) {
   const changes: { tool: string; plan: string; oldPrice: number; newPrice: number }[] = [];
-  const currentPricing = pricing as Record<string, Record<string, number>>;
-
+  const currentPricing = pricing as unknown as Record<string, Record<string, number>>;
   for (const tool of Object.keys(snapshot)) {
     const snapshotPlans = snapshot[tool];
     const currentPlans = currentPricing[tool];
