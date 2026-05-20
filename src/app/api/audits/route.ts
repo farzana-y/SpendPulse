@@ -1,20 +1,20 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { randomUUID } from "crypto";
+import { pricing } from "@/lib/pricing";
 
 export const runtime = "nodejs";
 
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { audits, overlaps, subscriptions } = body;
+    const { audits, overlaps, subscriptions, email } = body;
 
     if (!audits || !Array.isArray(audits)) {
       return NextResponse.json({ error: "Invalid audit data" }, { status: 400 });
     }
 
     const id = randomUUID();
-
     const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
@@ -24,25 +24,18 @@ export async function POST(req: NextRequest) {
       audits.reduce((sum: number, a: { savings: number }) => sum + a.savings, 0) +
       (overlaps ?? []).reduce((sum: number, o: { savings: number }) => sum + o.savings, 0);
 
-    const toolNames = (subscriptions ?? [])
-      .map((s: { tool: string }) => s.tool)
-      .join(", ");
+    const { error } = await supabase.from("audits").insert([{
+      id,
+      audits_data: audits,
+      overlaps_data: overlaps ?? [],
+      subscriptions_data: subscriptions ?? [],
+      email: email ?? null,
+      pricing_snapshot: pricing,
+      total_monthly_savings: totalMonthlySavings,
+      stale: false,
+    }]);
 
-    const { error } = await supabase.from("audits").insert([
-      {
-        id,
-        audits: JSON.stringify(audits),
-        overlaps: JSON.stringify(overlaps ?? []),
-        subscriptions: JSON.stringify(subscriptions ?? []),
-        total_monthly_savings: totalMonthlySavings,
-        tool_names: toolNames,
-      },
-    ]);
-
-    if (error) {
-      console.error("Supabase error:", error);
-      // Still return the ID so the app works even if DB fails
-    }
+    if (error) console.error("Supabase error:", error);
 
     return NextResponse.json({ id });
   } catch (error) {
@@ -67,7 +60,7 @@ export async function GET(req: NextRequest) {
 
     const { data, error } = await supabase
       .from("audits")
-      .select("audits, overlaps, subscriptions, total_monthly_savings, tool_names")
+      .select("audits_data, overlaps_data, subscriptions_data, total_monthly_savings, stale, pricing_snapshot")
       .eq("id", id)
       .single();
 
@@ -76,11 +69,12 @@ export async function GET(req: NextRequest) {
     }
 
     return NextResponse.json({
-      audits: JSON.parse(data.audits),
-      overlaps: JSON.parse(data.overlaps),
-      subscriptions: JSON.parse(data.subscriptions),
+      audits: data.audits_data,
+      overlaps: data.overlaps_data,
+      subscriptions: data.subscriptions_data,
       totalMonthlySavings: data.total_monthly_savings,
-      toolNames: data.tool_names,
+      stale: data.stale,
+      pricingSnapshot: data.pricing_snapshot,
     });
   } catch (error) {
     console.error("Fetch audit error:", error);

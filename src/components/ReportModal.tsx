@@ -36,6 +36,7 @@ export default function ReportModal({ totalMonthlySavings, tools, onClose }: Pro
         }),
       });
       if (!res.ok) throw new Error("Failed");
+      localStorage.setItem("auditEmail", email);
       setSubmitted(true);
       setTimeout(() => onClose(), 1500);
     } catch {

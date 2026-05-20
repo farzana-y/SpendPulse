@@ -66,6 +66,7 @@ export default function ResultsPage() {
         audits: result.audits,
         overlaps: result.overlaps ?? [],
         subscriptions: result.subscriptions ?? [],
+        email: localStorage.getItem("auditEmail") ?? null,
       }),
     })
       .then(async (r) => {
